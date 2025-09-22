@@ -9,9 +9,56 @@
 </head>
 <body>
   <header>Rumistore — мини-апп</header>
+
+  <!-- Панель фильтров -->
+  <section id="filters" class="filters">
+    <div class="row">
+      <label class="fcol">
+        <span>Бренд</span>
+        <select id="f-brand" class="input">
+          <option value="">Все бренды</option>
+        </select>
+      </label>
+
+      <label class="fcol">
+        <span>Размер</span>
+        <select id="f-size" class="input">
+          <option value="">Любой</option>
+          <!-- размеры добавятся динамически -->
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <label class="fcol">
+        <span>Пол</span>
+        <select id="f-gender" class="input">
+          <option value="">Любой</option>
+          <option value="men">Мужской</option>
+          <option value="women">Женский</option>
+          <option value="unisex">Unisex</option>
+        </select>
+      </label>
+
+      <label class="fcol">
+        <span>Цвет</span>
+        <select id="f-color" class="input">
+          <option value="">Любой</option>
+          <!-- цвета добавятся динамически -->
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="btn-clear" class="btn ghost">Сбросить</button>
+      <div class="chips" id="active-chips"></div>
+    </div>
+  </section>
+
   <div class="container">
     <div id="grid"></div>
   </div>
+
   <script src="app.js" defer></script>
 </body>
 </html>
