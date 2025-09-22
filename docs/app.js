@@ -1,6 +1,6 @@
 const tg = window.Telegram?.WebApp; tg?.expand?.();
 
-/* === theme from Telegram === */
+/* theme */
 (function theme(){
   const tp = tg?.themeParams || {};
   document.body.style.background = tp.bg_color || get('--bg');
@@ -8,20 +8,17 @@ const tg = window.Telegram?.WebApp; tg?.expand?.();
   function get(v){ return getComputedStyle(document.documentElement).getPropertyValue(v); }
 })();
 
-/* === state === */
+/* state */
 const state = {
   all: [], view: [],
   filters: { q:"", brand:"", size:"", gender:"", color:"", sort:"" },
-  current: null // текущий товар для страницы
+  current: null
 };
 
-/* === elements === */
+/* els */
 const el = {
-  grid: () => document.getElementById('grid'),
-  filters: () => document.getElementById('filters'),
-  chips: () => document.getElementById('active-chips'),
-  back: () => document.getElementById('btn-back'),
-
+  grid:   () => document.getElementById('grid'),
+  chips:  () => document.getElementById('active-chips'),
   search: () => document.getElementById('f-search'),
   brand:  () => document.getElementById('f-brand'),
   size:   () => document.getElementById('f-size'),
@@ -30,23 +27,23 @@ const el = {
   sort:   () => document.getElementById('f-sort'),
   clear:  () => document.getElementById('btn-clear'),
 
-  // product page
-  pview: () => document.getElementById('product'),
-  pimg:  () => document.getElementById('p-img'),
-  pbrand:() => document.getElementById('p-brand'),
-  ptitle:() => document.getElementById('p-title'),
-  pmeta: () => document.getElementById('p-meta'),
-  pprice:() => document.getElementById('p-price'),
-  psizes:() => document.getElementById('p-sizes'),
-  pdesc: () => document.getElementById('p-desc'),
-  pbuy:  () => document.getElementById('p-buy'),
+  overlay:() => document.getElementById('overlay'),
+  mClose: () => document.getElementById('m-close'),
+  mImg:   () => document.getElementById('m-img'),
+  mBrand: () => document.getElementById('m-brand'),
+  mTitle: () => document.getElementById('m-title'),
+  mMeta:  () => document.getElementById('m-meta'),
+  mPrice: () => document.getElementById('m-price'),
+  mSizes: () => document.getElementById('m-sizes'),
+  mDesc:  () => document.getElementById('m-desc'),
+  mBuy:   () => document.getElementById('m-buy'),
 };
 
 function money(n,c='RUB'){ return new Intl.NumberFormat('ru-RU',{style:'currency',currency:c}).format(n); }
 const uniq = (a)=>Array.from(new Set(a));
 const by = (k)=> (a,b)=> (a[k]>b[k]?1:a[k]<b[k]?-1:0);
 
-/* === list cards === */
+/* list */
 function listCard(p){
   const img = p.img ? `<img class="thumb" src="${p.img}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">` : '';
   return `
@@ -65,7 +62,7 @@ function renderList(){
   root.innerHTML = state.view.map(listCard).join('');
 }
 
-/* === filters === */
+/* filters */
 function renderChips(){
   const {q,brand,size,gender,color,sort} = state.filters;
   const chips = [];
@@ -77,7 +74,6 @@ function renderChips(){
   if (sort) chips.push(`<span class="chip"><b>Сорт.:</b> ${sort.replace('-',' ')}</span>`);
   el.chips().innerHTML = chips.join('');
 }
-
 function buildFilters(){
   const brands = uniq(state.all.map(p=>p.brand)).sort();
   el.brand().innerHTML = `<option value="">Бренд</option>` + brands.map(b=>`<option>${b}</option>`).join('');
@@ -86,7 +82,6 @@ function buildFilters(){
   const colors = uniq(state.all.flatMap(p=>p.colors||[])).sort();
   el.color().innerHTML = `<option value="">Цвет</option>` + colors.map(c=>`<option>${c}</option>`).join('');
 }
-
 function apply(){
   const {q,brand,size,gender,color,sort} = state.filters;
   let out = state.all.filter(p=>{
@@ -100,99 +95,74 @@ function apply(){
   if (sort === 'price-asc') out.sort((a,b)=>a.price-b.price);
   if (sort === 'price-desc') out.sort((a,b)=>b.price-a.price);
   if (sort === 'brand-asc') out.sort(by('brand'));
-
-  state.view = out;
-  renderList(); renderChips();
+  state.view = out; renderList(); renderChips();
 }
 
-/* === product page === */
-function openProduct(id){
-  const p = state.all.find(x=>x.id===id); if (!p) return;
+/* modal product */
+function openModal(p){
   state.current = p;
-  // fill
-  el.pimg().src = p.img || '';
-  el.pimg().alt = p.title;
-  el.pbrand().textContent = p.brand;
-  el.ptitle().textContent = p.title;
-  el.pprice().textContent = money(p.price, p.currency);
-  el.pmeta().textContent = (p.colors?.join(', ') || '').toUpperCase();
-  el.pdesc().textContent = p.desc || 'Оригинальные кроссовки. Гарантия подлинности. Быстрая доставка.';
-  // sizes
-  const box = el.psizes(); box.innerHTML = '';
+  el.mImg().src = p.img || ''; el.mImg().alt = p.title;
+  el.mBrand().textContent = p.brand;
+  el.mTitle().textContent = p.title;
+  el.mMeta().textContent = (p.colors?.join(', ') || '').toUpperCase();
+  el.mPrice().textContent = money(p.price, p.currency);
+  el.mDesc().textContent = p.desc || 'Оригинальные кроссовки. Гарантия подлинности. Быстрая доставка.';
+  const box = el.mSizes(); box.innerHTML = '';
   (p.sizes||[]).forEach(s=>{
     const b = document.createElement('button');
     b.className = 'size'; b.dataset.size = s; b.textContent = s;
-    b.onclick = ()=> { box.querySelectorAll('.size').forEach(x=>x.classList.remove('active')); b.classList.add('active'); };
+    b.onclick = ()=>{ box.querySelectorAll('.size').forEach(x=>x.classList.remove('active')); b.classList.add('active'); };
     box.appendChild(b);
   });
-
-  // show view
-  el.grid().hidden = true;
-  el.filters().hidden = true;
-  el.pview().hidden = false;
-  el.back().hidden = false;
-
-  // bottom main button (Telegram)
+  el.overlay().hidden = false;
   tg?.MainButton?.show();
   tg?.MainButton?.setText('Купить');
+  tg?.MainButton?.offClick?.(handleBuy); // на всякий
   tg?.MainButton?.onClick(handleBuy);
 }
-
-function closeProduct(){
-  state.current = null;
-  el.pview().hidden = true;
-  el.back().hidden = true;
-  el.grid().hidden = false;
-  el.filters().hidden = false;
+function closeModal(){
+  el.overlay().hidden = true;
   tg?.MainButton?.hide();
   tg?.MainButton?.offClick?.(handleBuy);
+  state.current = null;
 }
-
 function handleBuy(){
   if (!state.current) return;
-  const size = el.psizes().querySelector('.size.active')?.dataset.size;
+  const size = el.mSizes().querySelector('.size.active')?.dataset.size;
   if (!size) { alert('Выбери размер'); return; }
   tg?.sendData?.(JSON.stringify({ action:'buy', id: state.current.id, size: Number(size) }));
 }
 
-/* === tiny router (hash) === */
-function onRoute(){
-  const h = location.hash; // '', '#/product/xxx'
-  const m = h.match(/^#\/product\/(.+)$/);
-  if (m){ openProduct(decodeURIComponent(m[1])); }
-  else { closeProduct(); }
-}
-
-/* === mount === */
+/* mount */
 function mount(){
-  // filters
   el.search().addEventListener('input', e=>{ state.filters.q = e.target.value.trim(); apply(); });
   el.brand().onchange  = e=>{ state.filters.brand  = e.target.value; apply(); };
   el.size().onchange   = e=>{ state.filters.size   = e.target.value; apply(); };
   el.gender().onchange = e=>{ state.filters.gender = e.target.value; apply(); };
   el.color().onchange  = e=>{ state.filters.color  = e.target.value; apply(); };
   el.sort().onchange   = e=>{ state.filters.sort   = e.target.value; apply(); };
-  el.clear().onclick   = ()=>{ state.filters={q:"",brand:"",size:"",gender:"",color:"",sort:""};
-    el.search().value = el.brand().value = el.size().value = el.gender().value = el.color().value = el.sort().value = ""; apply();
+  document.getElementById('btn-clear').onclick = ()=>{
+    state.filters = { q:"", brand:"", size:"", gender:"", color:"", sort:"" };
+    el.search().value = el.brand().value = el.size().value = el.gender().value = el.color().value = el.sort().value = "";
+    apply();
   };
 
-  // click card → open product
+  // клик по карточке → модалка
   el.grid().addEventListener('click', (e)=>{
     const card = e.target.closest('.card'); if (!card) return;
     const id = card.dataset.id;
-    location.hash = `#/product/${encodeURIComponent(id)}`;
+    const p = state.all.find(x=>x.id===id);
+    if (p) openModal(p);
   });
 
-  // back button
-  el.back().onclick = ()=> history.back();
-
-  // listen route
-  addEventListener('hashchange', onRoute);
+  // закрытие модалки
+  el.mClose().onclick = closeModal;
+  el.overlay().addEventListener('click', (e)=>{ if (e.target.id === 'overlay') closeModal(); });
 }
 
-/* === init === */
+/* init */
 (async function init(){
   const res = await fetch('products.json',{cache:'no-store'});
   state.all = await res.json();
-  buildFilters(); mount(); apply(); onRoute();
+  buildFilters(); mount(); state.view = state.all.slice(); apply();
 })();

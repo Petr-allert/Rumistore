@@ -9,12 +9,11 @@
 </head>
 <body>
   <header class="topbar">
-    <button id="btn-back" class="iconbtn" aria-label="Назад" hidden>←</button>
     <div class="brand">Rumistore</div>
     <div class="actions"><button id="btn-clear" class="btn ghost">Сбросить</button></div>
   </header>
 
-  <!-- Панель фильтров (прячется на детальной странице) -->
+  <!-- панель фильтров -->
   <section class="filterbar" id="filters">
     <div class="frow">
       <div class="fcontrol"><input id="f-search" class="input" type="search" placeholder="Поиск модели…"/></div>
@@ -32,33 +31,28 @@
   </section>
 
   <main class="wrap">
-    <!-- список -->
     <div id="grid" class="grid" role="list"></div>
-
-    <!-- страница товара -->
-    <article id="product" class="pview" hidden>
-      <div class="pmedia">
-        <img id="p-img" class="pimg" alt="Фото товара" loading="lazy"/>
-      </div>
-      <div class="pinfo">
-        <div class="brand-t" id="p-brand"></div>
-        <h1 class="ptitle" id="p-title"></h1>
-        <div class="prow muted" id="p-meta"></div>
-        <div class="pprice" id="p-price"></div>
-
-        <div class="prow">
-          <div class="psection">Размер</div>
-          <div id="p-sizes" class="psizes"></div>
-        </div>
-
-        <div class="prow">
-          <button id="p-buy" class="btn primary">Купить</button>
-        </div>
-
-        <div class="pdesc" id="p-desc"></div>
-      </div>
-    </article>
   </main>
+
+  <!-- 🔽 модальное окно карточки товара -->
+  <div id="overlay" class="overlay" hidden>
+    <div class="modal">
+      <button class="close" id="m-close" aria-label="Закрыть">×</button>
+      <div class="m-media"><img id="m-img" alt="Фото" class="m-img" loading="lazy"></div>
+      <div class="m-info">
+        <div class="brand-t" id="m-brand"></div>
+        <h1 class="m-title" id="m-title"></h1>
+        <div class="muted" id="m-meta"></div>
+        <div class="m-price" id="m-price"></div>
+        <div class="m-row">
+          <div class="m-section">Размер</div>
+          <div id="m-sizes" class="m-sizes"></div>
+        </div>
+        <button id="m-buy" class="btn primary">Купить</button>
+        <div class="m-desc" id="m-desc"></div>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js" defer></script>
 </body>
