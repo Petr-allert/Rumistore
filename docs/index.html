@@ -3,20 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sneaker Mini App</title>
-  <link rel="stylesheet" href="./styles.css" />
-  <!-- Telegram WebApp SDK -->
+  <title>Rumistore</title>
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Магазин кроссовок</h1>
-    <p class="hint">Выбери размер — сумма появится на нижней кнопке Telegram</p>
-  </header>
-
-  <main id="grid"></main>
-
-  <noscript style="padding:16px;color:#b91c1c">Для работы приложения нужен JavaScript.</noscript>
-  <script type="module" src="./app.js"></script>
+  <header>Rumistore — мини-апп</header>
+  <div class="container">
+    <div id="grid"></div>
+  </div>
+  <script src="app.js" defer></script>
 </body>
 </html>
