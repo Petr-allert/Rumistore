@@ -1,0 +1,4 @@
+[
+  { "sku": "airmax90", "title": "Nike Air Max 90", "price": 12990, "currency": "RUB", "sizes": ["41","42","43"], "img": "" },
+  { "sku": "nb550",    "title": "New Balance 550", "price": 15990, "currency": "RUB", "sizes": ["40","41","42","43"], "img": "" }
+]
