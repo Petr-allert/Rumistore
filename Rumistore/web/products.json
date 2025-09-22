@@ -1,0 +1,74 @@
+[
+  {
+    "id": "nike-am90",
+    "title": "Nike Air Max 90 (Black)",
+    "brand": "Nike",
+    "price": 12990,
+    "currency": "RUB",
+    "sizes": [40, 41, 42, 43, 44],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Nike_Air_Max_90.jpg"
+  },
+  {
+    "id": "adidas-samba-og",
+    "title": "adidas Samba OG (White/Black)",
+    "brand": "adidas",
+    "price": 10990,
+    "currency": "RUB",
+    "sizes": [39, 40, 41, 42, 43, 44],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Adidas_Samba_OG.jpg"
+  },
+  {
+    "id": "nb-550",
+    "title": "New Balance 550 (White/Burgundy)",
+    "brand": "New Balance",
+    "price": 13990,
+    "currency": "RUB",
+    "sizes": [40, 41, 42, 43, 44],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/7/75/New_Balance_550.jpg"
+  },
+  {
+    "id": "nike-dunk-low",
+    "title": "Nike Dunk Low (Grey/White)",
+    "brand": "Nike",
+    "price": 12990,
+    "currency": "RUB",
+    "sizes": [38, 39, 40, 41, 42, 43],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Nike_Dunk_Low.jpg"
+  },
+  {
+    "id": "air-jordan-1-mid",
+    "title": "Air Jordan 1 Mid (White/Grey)",
+    "brand": "Jordan",
+    "price": 15990,
+    "currency": "RUB",
+    "sizes": [40, 41, 42, 43, 44, 45],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Air_Jordan_1_Mid_02.jpg"
+  },
+  {
+    "id": "asics-gk14",
+    "title": "ASICS GEL-Kayano 14 x Aritzia (White/Green)",
+    "brand": "ASICS",
+    "price": 14990,
+    "currency": "RUB",
+    "sizes": [39, 40, 41, 42, 43, 44],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/0/03/Gel-Kayano_14_Artizia.jpg"
+  },
+  {
+    "id": "puma-suede",
+    "title": "PUMA Suede (Black/White)",
+    "brand": "PUMA",
+    "price": 8990,
+    "currency": "RUB",
+    "sizes": [39, 40, 41, 42, 43, 44],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Puma_Suede.jpg"
+  },
+  {
+    "id": "converse-chuck",
+    "title": "Converse Chuck Taylor All Star (Hi, Black)",
+    "brand": "Converse",
+    "price": 7990,
+    "currency": "RUB",
+    "sizes": [38, 39, 40, 41, 42, 43, 44],
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Converse_Chuck_Taylor_All-Stars_%2851091002425%29.jpg/1024px-Converse_Chuck_Taylor_All-Stars_%2851091002425%29.jpg"
+  }
+]

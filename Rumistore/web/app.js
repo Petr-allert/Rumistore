@@ -1,66 +1,56 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
+const tg = window.Telegram?.WebApp;
+if (tg) tg.expand();
 
-const state = { cart: [] };
-const byKey = (i) => i.sku + "|" + i.size;
-const total = () => state.cart.reduce((s,i)=>s + i.price*i.qty, 0);
-const currency = () => state.cart[0]?.currency || "RUB";
-
-function updateMainButton(){
-  if(state.cart.length === 0){ tg.MainButton.hide(); return; }
-  tg.MainButton.setText(`Оплатить ${(total()/100).toFixed(2)} ${currency()}`);
-  tg.MainButton.show();
+async function loadProducts() {
+  const res = await fetch("products.json", { cache: "no-store" });
+  return await res.json();
 }
 
-function addToCart(item){
-  const key = byKey(item);
-  const found = state.cart.find(i => byKey(i) === key);
-  if(found) found.qty += 1; else state.cart.push(item);
-  tg.HapticFeedback.selectionChanged();
-  updateMainButton();
+function fmtPrice(p) {
+  return new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB" }).format(p);
 }
 
-tg.MainButton.onClick(() => {
-  if(state.cart.length === 0) return;
-  tg.sendData(JSON.stringify({
-    action: "checkout",
-    items: state.cart.map(i => ({
-      sku: i.sku, size: i.size, qty: i.qty,
-      // price/title клиент присылает для удобства, НО цена будет рассчитана ботом
-      price: i.price, title: i.title
-    })),
-    currency: currency()
-  }));
-});
+function productCard(p) {
+  const sizes = p.sizes.map(s => `<button class="size" data-size="${s}">${s}</button>`).join("");
+  const img = p.img ? `<img class="thumb" src="${p.img}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">` : "";
+  return `
+    <div class="card" data-id="${p.id}">
+      <div class="imgwrap">${img}</div>
+      <div class="info">
+        <div class="brand">${p.brand}</div>
+        <div class="title">${p.title}</div>
+        <div class="price">${fmtPrice(p.price)}</div>
+        <div class="sizes">${sizes}</div>
+        <button class="buy">Купить</button>
+      </div>
+    </div>
+  `;
+}
 
-// рендер карточек
-async function bootstrap(){
-  const res = await fetch("./products.json");
-  const items = await res.json();
-  const grid = document.getElementById("grid");
-
-  // адаптация к теме Telegram
-  const tp = tg.themeParams || {};
-  document.body.style.background = tp.bg_color || "white";
-  document.querySelectorAll(".card").forEach(el => el.style.background = tp.secondary_bg_color || "#f3f4f6");
-
-  items.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <div class="title">${p.title}</div>
-      <div class="price">${(p.price/100).toFixed(2)} ${p.currency}</div>
-      <div class="sizes"></div>
-    `;
-    const box = card.querySelector(".sizes");
-    p.sizes.forEach(s => {
-      const btn = document.createElement("button");
-      btn.className = "size-btn";
-      btn.textContent = s;
-      btn.onclick = () => addToCart({ sku:p.sku, title:p.title, price:p.price, size:s, qty:1, currency:p.currency });
-      box.appendChild(btn);
-    });
-    grid.appendChild(card);
+function mountHandlers(root) {
+  root.addEventListener("click", (e) => {
+    const sizeBtn = e.target.closest(".size");
+    if (sizeBtn) {
+      const wrap = sizeBtn.closest(".sizes");
+      wrap.querySelectorAll(".size").forEach(b => b.classList.remove("active"));
+      sizeBtn.classList.add("active");
+    }
+    const buyBtn = e.target.closest(".buy");
+    if (buyBtn) {
+      const card = buyBtn.closest(".card");
+      const chosen = card.querySelector(".size.active")?.dataset.size;
+      const title = card.querySelector(".title").textContent;
+      if (!chosen) return alert("Выбери размер");
+      if (tg) tg.sendData(JSON.stringify({ action: "buy", id: card.dataset.id, size: chosen }));
+      else alert(`Оформляем: ${title}, размер ${chosen}`);
+    }
   });
 }
-bootstrap();
+
+async function init() {
+  const products = await loadProducts();
+  const root = document.getElementById("grid");
+  root.innerHTML = products.map(productCard).join("");
+  mountHandlers(root);
+}
+init();
