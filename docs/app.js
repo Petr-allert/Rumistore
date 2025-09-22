@@ -11,7 +11,7 @@ tg?.expand?.();
 
 /* ===== State ===== */
 const state = {
-  all: [],
+  all: [],        // нормализованные товары
   view: [],
   filters: { q:"", brand:"", size:"", gender:"", color:"", sort:"" },
   current: null
@@ -46,13 +46,45 @@ const el = {
 function money(n,c='RUB'){ return new Intl.NumberFormat('ru-RU',{style:'currency',currency:c}).format(n); }
 const uniq = (a)=>Array.from(new Set(a));
 const by = (k)=> (a,b)=> (a[k]>b[k]?1:a[k]<b[k]?-1:0);
+function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
+
+/* Плейсхолдер-картинка (если нет img) */
+const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+     <rect width="100%" height="100%" fill="#0c111b"/>
+     <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+       font-family="system-ui, -apple-system, Segoe UI, Roboto" font-size="18" fill="#9aa8b6">
+       Фото скоро будет
+     </text>
+   </svg>`
+);
+
+/* Нормализация товара (поддерживаем id ИЛИ sku, и дефолты) */
+function normalize(p){
+  return {
+    id: String(p.id ?? p.sku ?? crypto.randomUUID()),
+    sku: String(p.sku ?? p.id ?? ''),
+    title: p.title ?? 'Без названия',
+    brand: p.brand ?? 'Brand',
+    gender: p.gender ?? 'unisex',
+    colors: Array.isArray(p.colors) ? p.colors : [],
+    price: Number.isFinite(p.price) ? p.price : 0,
+    currency: p.currency ?? 'RUB',
+    sizes: Array.isArray(p.sizes) ? p.sizes.map(Number) : [],
+    img: p.img || '',
+    desc: p.desc || ''
+  };
+}
 
 /* ===== Cards (list) ===== */
 function listCard(p){
-  const img = p.img ? `<img class="thumb" src="${p.img}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">` : '';
+  const src = p.img || PLACEHOLDER;
   return `
     <article class="card" data-id="${p.id}" role="listitem">
-      <div class="img">${img}</div>
+      <div class="img">
+        <img class="thumb" src="${src}" alt="${escapeHtml(p.title)}" loading="lazy"
+             onerror="this.src='${PLACEHOLDER}'">
+      </div>
       <div class="info">
         <div class="brand-t">${p.brand}</div>
         <div class="title">${p.title}</div>
@@ -108,12 +140,17 @@ function apply(){
   state.view = out;
   renderList(); renderChips();
 }
-function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
 
 /* ===== Product fullscreen modal ===== */
 function openModal(p){
+  // защита от пустых карточек
+  if (!p) return;
+  if (!p.sizes || p.sizes.length === 0) p.sizes = [40,41,42]; // дефолт
+
   state.current = p;
-  el.mImg().src = p.img || ''; el.mImg().alt = p.title;
+
+  el.mImg().src = p.img || PLACEHOLDER;
+  el.mImg().alt = p.title;
   el.mBrand().textContent = p.brand;
   el.mTitle().textContent = p.title;
   el.mMeta().textContent = (p.colors?.join(', ') || '').toUpperCase();
@@ -121,14 +158,14 @@ function openModal(p){
   el.mDesc().textContent = p.desc || 'Оригинальные кроссовки. Гарантия подлинности. Быстрая доставка.';
 
   const box = el.mSizes(); box.innerHTML = '';
-  (p.sizes||[]).forEach(s=>{
+  p.sizes.forEach(s=>{
     const b = document.createElement('button');
     b.className = 'size'; b.dataset.size = s; b.textContent = s;
     b.onclick = ()=>{ box.querySelectorAll('.size').forEach(x=>x.classList.remove('active')); b.classList.add('active'); };
     box.appendChild(b);
   });
 
-  document.body.classList.add('modal-open');     // блокируем фон
+  document.body.classList.add('modal-open');
   el.overlay().hidden = false;
 
   tg?.MainButton?.show();
@@ -169,7 +206,8 @@ function mount(){
   el.grid().addEventListener('click', (e)=>{
     const card = e.target.closest('.card'); if (!card) return;
     const id = card.dataset.id;
-    const p = state.all.find(x=>x.id===id);
+    // ищем по id, а если у тебя старый products.json — поддержим sku
+    const p = state.all.find(x=>x.id===id || x.sku===id);
     if (p) openModal(p);
   });
 
@@ -181,6 +219,7 @@ function mount(){
 /* ===== Init ===== */
 (async function init(){
   const res = await fetch('products.json',{cache:'no-store'});
-  state.all = await res.json();
+  const raw = await res.json();
+  state.all = raw.map(normalize);          // 🔥 нормализуем товары
   buildFilters(); mount(); state.view = state.all.slice(); apply();
 })();
