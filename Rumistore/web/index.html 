@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sneaker Mini App</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Магазин кроссовок</h1>
+    <p class="hint">Выбери размер — сумма появится на нижней кнопке Telegram</p>
+  </header>
+
+  <main id="grid"></main>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
