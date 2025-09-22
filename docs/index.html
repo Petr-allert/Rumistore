@@ -10,22 +10,48 @@
 <body>
   <header class="topbar">
     <div class="brand">Rumistore</div>
-    <div class="actions"><button id="btn-clear" class="btn ghost">Сбросить</button></div>
+    <div class="actions">
+      <button id="btn-clear" class="btn ghost">Сбросить</button>
+    </div>
   </header>
 
-  <!-- панель фильтров -->
+  <!-- Фильтры -->
   <section class="filterbar" id="filters">
     <div class="frow">
-      <div class="fcontrol"><input id="f-search" class="input" type="search" placeholder="Поиск модели…"/></div>
-      <div class="fcontrol"><select id="f-brand"  class="input select"><option value="">Бренд</option></select></div>
-      <div class="fcontrol"><select id="f-size"   class="input select"><option value="">Размер</option></select></div>
-      <div class="fcontrol"><select id="f-gender" class="input select">
-        <option value="">Пол</option><option value="men">Мужской</option><option value="women">Женский</option><option value="unisex">Unisex</option>
-      </select></div>
-      <div class="fcontrol"><select id="f-color"  class="input select"><option value="">Цвет</option></select></div>
-      <div class="fcontrol"><select id="f-sort"   class="input select">
-        <option value="">Сортировка</option><option value="price-asc">Цена ↑</option><option value="price-desc">Цена ↓</option><option value="brand-asc">Бренд A–Z</option>
-      </select></div>
+      <div class="fcontrol">
+        <input id="f-search" class="input" type="search" placeholder="Поиск модели…" />
+      </div>
+      <div class="fcontrol">
+        <select id="f-brand" class="input select">
+          <option value="">Бренд</option>
+        </select>
+      </div>
+      <div class="fcontrol">
+        <select id="f-size" class="input select">
+          <option value="">Размер</option>
+        </select>
+      </div>
+      <div class="fcontrol">
+        <select id="f-gender" class="input select">
+          <option value="">Пол</option>
+          <option value="men">Мужской</option>
+          <option value="women">Женский</option>
+          <option value="unisex">Unisex</option>
+        </select>
+      </div>
+      <div class="fcontrol">
+        <select id="f-color" class="input select">
+          <option value="">Цвет</option>
+        </select>
+      </div>
+      <div class="fcontrol">
+        <select id="f-sort" class="input select">
+          <option value="">Сортировка</option>
+          <option value="price-asc">Цена ↑</option>
+          <option value="price-desc">Цена ↓</option>
+          <option value="brand-asc">Бренд A–Z</option>
+        </select>
+      </div>
     </div>
     <div class="chips" id="active-chips"></div>
   </section>
@@ -34,20 +60,26 @@
     <div id="grid" class="grid" role="list"></div>
   </main>
 
-  <!-- 🔽 модальное окно карточки товара -->
+  <!-- Полноэкранная карточка товара -->
   <div id="overlay" class="overlay" hidden>
     <div class="modal">
       <button class="close" id="m-close" aria-label="Закрыть">×</button>
-      <div class="m-media"><img id="m-img" alt="Фото" class="m-img" loading="lazy"></div>
+
+      <div class="m-media">
+        <img id="m-img" class="m-img" alt="Фото" loading="lazy">
+      </div>
+
       <div class="m-info">
         <div class="brand-t" id="m-brand"></div>
         <h1 class="m-title" id="m-title"></h1>
         <div class="muted" id="m-meta"></div>
         <div class="m-price" id="m-price"></div>
-        <div class="m-row">
+
+        <div>
           <div class="m-section">Размер</div>
           <div id="m-sizes" class="m-sizes"></div>
         </div>
+
         <button id="m-buy" class="btn primary">Купить</button>
         <div class="m-desc" id="m-desc"></div>
       </div>
