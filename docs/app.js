@@ -1,7 +1,7 @@
 const tg = window.Telegram?.WebApp;
 tg?.expand?.();
 
-/* Telegram theme */
+/* ===== Theme from Telegram ===== */
 (function theme(){
   const tp = tg?.themeParams || {};
   document.body.style.background = tp.bg_color || get('--bg');
@@ -11,10 +11,10 @@ tg?.expand?.();
 
 /* ===== State ===== */
 const state = {
-  all: [],        // нормализованные товары
-  view: [],
+  all: [],        // товары
+  view: [],       // отфильтрованный список
   filters: { q:"", brand:"", size:"", gender:"", color:"", sort:"" },
-  current: null
+  current: null   // выбранный товар (для модалки)
 };
 
 /* ===== Elements ===== */
@@ -48,42 +48,23 @@ const uniq = (a)=>Array.from(new Set(a));
 const by = (k)=> (a,b)=> (a[k]>b[k]?1:a[k]<b[k]?-1:0);
 function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
 
-/* Плейсхолдер-картинка (если нет img) */
-const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
-     <rect width="100%" height="100%" fill="#0c111b"/>
-     <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-       font-family="system-ui, -apple-system, Segoe UI, Roboto" font-size="18" fill="#9aa8b6">
-       Фото скоро будет
-     </text>
-   </svg>`
-);
-
-/* Нормализация товара (поддерживаем id ИЛИ sku, и дефолты) */
-function normalize(p){
-  return {
-    id: String(p.id ?? p.sku ?? crypto.randomUUID()),
-    sku: String(p.sku ?? p.id ?? ''),
-    title: p.title ?? 'Без названия',
-    brand: p.brand ?? 'Brand',
-    gender: p.gender ?? 'unisex',
-    colors: Array.isArray(p.colors) ? p.colors : [],
-    price: Number.isFinite(p.price) ? p.price : 0,
-    currency: p.currency ?? 'RUB',
-    sizes: Array.isArray(p.sizes) ? p.sizes.map(Number) : [],
-    img: p.img || '',
-    desc: p.desc || ''
-  };
+/* Делает абсолютный URL относительно текущей страницы (docs — корень Pages) */
+function assetUrl(path) {
+  try { return new URL(path, document.baseURI).toString(); }
+  catch { return path; }
 }
 
-/* ===== Cards (list) ===== */
+/* Локальный плейсхолдер на случай ошибки загрузки */
+const PLACEHOLDER = assetUrl("./img/placeholder.png");
+
+/* ===== Список карточек ===== */
 function listCard(p){
-  const src = p.img || PLACEHOLDER;
+  const src = assetUrl(p.img || "./img/placeholder.png");
   return `
     <article class="card" data-id="${p.id}" role="listitem">
       <div class="img">
         <img class="thumb" src="${src}" alt="${escapeHtml(p.title)}" loading="lazy"
-             onerror="this.src='${PLACEHOLDER}'">
+             onerror="this.onerror=null; this.src='${PLACEHOLDER}';">
       </div>
       <div class="info">
         <div class="brand-t">${p.brand}</div>
@@ -92,6 +73,7 @@ function listCard(p){
       </div>
     </article>`;
 }
+
 function renderList(){
   const root = el.grid();
   if (!state.view.length){
@@ -101,7 +83,7 @@ function renderList(){
   root.innerHTML = state.view.map(listCard).join('');
 }
 
-/* ===== Filters ===== */
+/* ===== Фильтры ===== */
 function renderChips(){
   const {q,brand,size,gender,color,sort} = state.filters;
   const chips = [];
@@ -113,6 +95,7 @@ function renderChips(){
   if (sort) chips.push(`<span class="chip"><b>Сорт.:</b> ${sort.replace('-',' ')}</span>`);
   el.chips().innerHTML = chips.join('');
 }
+
 function buildFilters(){
   const brands = uniq(state.all.map(p=>p.brand)).sort();
   el.brand().innerHTML = `<option value="">Бренд</option>` + brands.map(b=>`<option>${b}</option>`).join('');
@@ -121,6 +104,7 @@ function buildFilters(){
   const colors = uniq(state.all.flatMap(p=>p.colors||[])).sort();
   el.color().innerHTML = `<option value="">Цвет</option>` + colors.map(c=>`<option>${c}</option>`).join('');
 }
+
 function apply(){
   const {q,brand,size,gender,color,sort} = state.filters;
   let out = state.all.filter(p=>{
@@ -141,21 +125,23 @@ function apply(){
   renderList(); renderChips();
 }
 
-/* ===== Product fullscreen modal ===== */
+/* ===== Полноэкранная карточка товара ===== */
 function openModal(p){
-  // защита от пустых карточек
   if (!p) return;
-  if (!p.sizes || p.sizes.length === 0) p.sizes = [40,41,42]; // дефолт
+  if (!Array.isArray(p.sizes) || p.sizes.length === 0) p.sizes = [40,41,42];
 
   state.current = p;
 
-  el.mImg().src = p.img || PLACEHOLDER;
+  const src = assetUrl(p.img || "./img/placeholder.png");
+  el.mImg().src = src;
   el.mImg().alt = p.title;
+  el.mImg().onerror = () => { el.mImg().onerror = null; el.mImg().src = PLACEHOLDER; };
+
   el.mBrand().textContent = p.brand;
   el.mTitle().textContent = p.title;
-  el.mMeta().textContent = (p.colors?.join(', ') || '').toUpperCase();
+  el.mMeta().textContent  = (p.colors?.join(', ') || '').toUpperCase();
   el.mPrice().textContent = money(p.price, p.currency);
-  el.mDesc().textContent = p.desc || 'Оригинальные кроссовки. Гарантия подлинности. Быстрая доставка.';
+  el.mDesc().textContent  = p.desc || 'Оригинальные кроссовки. Гарантия подлинности. Быстрая доставка.';
 
   const box = el.mSizes(); box.innerHTML = '';
   p.sizes.forEach(s=>{
@@ -173,6 +159,7 @@ function openModal(p){
   tg?.MainButton?.offClick?.(handleBuy);
   tg?.MainButton?.onClick(handleBuy);
 }
+
 function closeModal(){
   el.overlay().hidden = true;
   document.body.classList.remove('modal-open');
@@ -180,6 +167,7 @@ function closeModal(){
   tg?.MainButton?.offClick?.(handleBuy);
   state.current = null;
 }
+
 function handleBuy(){
   if (!state.current) return;
   const size = el.mSizes().querySelector('.size.active')?.dataset.size;
@@ -206,8 +194,7 @@ function mount(){
   el.grid().addEventListener('click', (e)=>{
     const card = e.target.closest('.card'); if (!card) return;
     const id = card.dataset.id;
-    // ищем по id, а если у тебя старый products.json — поддержим sku
-    const p = state.all.find(x=>x.id===id || x.sku===id);
+    const p = state.all.find(x=>x.id===id);
     if (p) openModal(p);
   });
 
@@ -219,7 +206,6 @@ function mount(){
 /* ===== Init ===== */
 (async function init(){
   const res = await fetch('products.json',{cache:'no-store'});
-  const raw = await res.json();
-  state.all = raw.map(normalize);          // 🔥 нормализуем товары
+  state.all = await res.json();
   buildFilters(); mount(); state.view = state.all.slice(); apply();
 })();
