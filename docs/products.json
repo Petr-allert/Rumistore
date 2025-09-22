@@ -1,90 +1,10 @@
 [
-  {
-    "id": "nike-am90",
-    "title": "Nike Air Max 90 (Black)",
-    "brand": "Nike",
-    "gender": "men",
-    "colors": ["black", "white"],
-    "price": 12990,
-    "currency": "RUB",
-    "sizes": [40, 41, 42, 43, 44],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Nike_Air_Max_90.jpg"
-  },
-  {
-    "id": "adidas-samba-og",
-    "title": "adidas Samba OG (White/Black)",
-    "brand": "adidas",
-    "gender": "unisex",
-    "colors": ["white", "black"],
-    "price": 10990,
-    "currency": "RUB",
-    "sizes": [39, 40, 41, 42, 43, 44],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Adidas_Samba_OG.jpg"
-  },
-  {
-    "id": "nb-550",
-    "title": "New Balance 550 (White/Burgundy)",
-    "brand": "New Balance",
-    "gender": "men",
-    "colors": ["white", "burgundy"],
-    "price": 13990,
-    "currency": "RUB",
-    "sizes": [40, 41, 42, 43, 44],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/7/75/New_Balance_550.jpg"
-  },
-  {
-    "id": "nike-dunk-low",
-    "title": "Nike Dunk Low (Grey/White)",
-    "brand": "Nike",
-    "gender": "unisex",
-    "colors": ["grey", "white"],
-    "price": 12990,
-    "currency": "RUB",
-    "sizes": [38, 39, 40, 41, 42, 43],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Nike_Dunk_Low.jpg"
-  },
-  {
-    "id": "air-jordan-1-mid",
-    "title": "Air Jordan 1 Mid (White/Grey)",
-    "brand": "Jordan",
-    "gender": "men",
-    "colors": ["white", "grey"],
-    "price": 15990,
-    "currency": "RUB",
-    "sizes": [40, 41, 42, 43, 44, 45],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Air_Jordan_1_Mid_02.jpg"
-  },
-  {
-    "id": "asics-gk14",
-    "title": "ASICS GEL-Kayano 14 (White/Green)",
-    "brand": "ASICS",
-    "gender": "unisex",
-    "colors": ["white", "green"],
-    "price": 14990,
-    "currency": "RUB",
-    "sizes": [39, 40, 41, 42, 43, 44],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/0/03/Gel-Kayano_14_Artizia.jpg"
-  },
-  {
-    "id": "puma-suede",
-    "title": "PUMA Suede (Black/White)",
-    "brand": "PUMA",
-    "gender": "unisex",
-    "colors": ["black", "white"],
-    "price": 8990,
-    "currency": "RUB",
-    "sizes": [39, 40, 41, 42, 43, 44],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Puma_Suede.jpg"
-  },
-  {
-    "id": "converse-chuck",
-    "title": "Converse Chuck Taylor (Hi, Black)",
-    "brand": "Converse",
-    "gender": "unisex",
-    "colors": ["black", "white"],
-    "price": 7990,
-    "currency": "RUB",
-    "sizes": [38, 39, 40, 41, 42, 43, 44],
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Converse_Chuck_Taylor_All-Stars_%2851091002425%29.jpg/1024px-Converse_Chuck_Taylor_All-Stars_%2851091002425%29.jpg"
-  }
+  { "id": "nike-am90",        "title": "Nike Air Max 90 (Black)",           "brand": "Nike",       "gender": "men",    "colors": ["black","white"],    "price": 12990, "currency": "RUB", "sizes": [40,41,42,43,44],       "img": "./img/nike-am90.jpg" },
+  { "id": "adidas-samba-og",  "title": "adidas Samba OG (White/Black)",     "brand": "adidas",     "gender": "unisex", "colors": ["white","black"],    "price": 10990, "currency": "RUB", "sizes": [39,40,41,42,43,44],   "img": "./img/adidas-samba-og.jpg" },
+  { "id": "nb-550",           "title": "New Balance 550 (White/Burgundy)",  "brand": "New Balance","gender": "men",    "colors": ["white","burgundy"], "price": 13990, "currency": "RUB", "sizes": [40,41,42,43,44],       "img": "./img/nb-550.jpg" },
+  { "id": "nike-dunk-low",    "title": "Nike Dunk Low (Grey/White)",        "brand": "Nike",       "gender": "unisex", "colors": ["grey","white"],     "price": 12990, "currency": "RUB", "sizes": [38,39,40,41,42,43],   "img": "./img/nike-dunk-low.jpg" },
+  { "id": "air-jordan-1-mid", "title": "Air Jordan 1 Mid (White/Grey)",     "brand": "Jordan",     "gender": "men",    "colors": ["white","grey"],     "price": 15990, "currency": "RUB", "sizes": [40,41,42,43,44,45],   "img": "./img/air-jordan-1-mid.jpg" },
+  { "id": "asics-gk14",       "title": "ASICS GEL-Kayano 14 (White/Green)", "brand": "ASICS",      "gender": "unisex", "colors": ["white","green"],     "price": 14990, "currency": "RUB", "sizes": [39,40,41,42,43,44],   "img": "./img/asics-gk14.jpg" },
+  { "id": "puma-suede",       "title": "PUMA Suede (Black/White)",          "brand": "PUMA",       "gender": "unisex", "colors": ["black","white"],     "price": 8990,  "currency": "RUB", "sizes": [39,40,41,42,43,44],   "img": "./img/puma-suede.jpg" },
+  { "id": "converse-chuck",   "title": "Converse Chuck Taylor (Hi, Black)", "brand": "Converse",   "gender": "unisex", "colors": ["black","white"],     "price": 7990,  "currency": "RUB", "sizes": [38,39,40,41,42,43,44], "img": "./img/converse-chuck.jpg" }
 ]
